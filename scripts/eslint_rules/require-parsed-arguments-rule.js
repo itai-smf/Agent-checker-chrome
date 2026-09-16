@@ -81,6 +81,15 @@ export default {
                   if (!paramName) {
                     if (firstParam.type === 'Identifier') {
                       paramName = firstParam.name;
+                    } else if (firstParam.type === 'AssignmentPattern') {
+                      const left = sourceCode.getText(firstParam.left);
+                      const right = sourceCode.getText(firstParam.right);
+                      const output = `${left}: ParsedArguments = ${right}`;
+                      if (hasParens) {
+                        return fixer.replaceText(firstParam, output);
+                      } else {
+                        return fixer.replaceText(firstParam, `(${output})`);
+                      }
                     } else {
                       const text = sourceCode.getText(firstParam);
                       paramName = text.split(':')[0].trim();
